@@ -1,3 +1,4 @@
+git bash
 cd naar lab4 directory
 git add *
 git commit -m 'commit message'
