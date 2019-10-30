@@ -1,0 +1,4 @@
+cd naar lab4 directory
+git add *
+git commit -m 'commit message'
+git push origin master
