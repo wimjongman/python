@@ -1,5 +1,7 @@
 git bash
+pwd
 cd naar lab4 directory
+git status
 git add *
 git commit -m 'commit message'
 git push origin master

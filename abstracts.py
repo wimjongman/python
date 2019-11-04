@@ -32,14 +32,12 @@ def list_dir():
     choice = int(input('Please type 1 to ' + str(menu) + ' or 0: '))
     return files[choice]       
 
-def option_1():
+def select_file():
     file_name = list_dir()
     if file_name.endswith('/'):
         os.chdir(file_name)
-        return option_1()
+        return select_file()
     elif len(file_name) == 0:
-        print('')
-        print('Goodbye!')
         return ''
     else:
         return file_name
@@ -47,7 +45,11 @@ def option_1():
 def main(selected_file):
     choice = intro(selected_file)
     if choice == 1:
-        selected_file = option_1()
+        selected_file = select_file()
+        if len(selected_file) == 0:
+            print('')
+            print('Goodbye!')
+            return  
     elif choice == 0:
         print('')
         print('Goodbye!')
@@ -55,3 +57,4 @@ def main(selected_file):
     main(selected_file)
 
 main('')
+
