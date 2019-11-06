@@ -1,3 +1,48 @@
+def compression_rate():
+    file = open()
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def encodenumber():
     slash = '\\'
     counter = 0
@@ -48,8 +93,5 @@ def x():
         else:
             word += letter
     print(word)
-
-
-print(number_backslash())
             
             
