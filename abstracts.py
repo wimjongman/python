@@ -1,16 +1,17 @@
-'''
-Student .......: Sam Jongman
-Number ........: S2550040
+print('''
+Student .......: Sam Jongman, Huub Visser
+Number ........: s2550040, s2568861
 Assignment ....: Abstracts
 Last Edit Date : Nov, 7 2019
 
-Description ...: This program encodes and decodes text files
-'''
+Description ...: This program encodes and decodes text files that the user can upload
+''')
 
 import os
 import math
 
 def main_menu(selected_file):
+                                                    # This asks what the user wants to do
     clear_console();
     options = "1"
     print('Welcome to Abstracts')
@@ -28,7 +29,7 @@ def main_menu(selected_file):
         print('No .txt or index.csv file selected.')
     print('')
     print('1: Select a file')
-    if selected_file.lower().endswith('txt'):
+    if selected_file.lower().endswith('txt'): #This checks what kind of file it is, if it isn't a text file or csv file it asks agian
         print('2: Encode ' + selected_file)
         options += ", 2" 
     if selected_file.lower().endswith('csv'):
@@ -41,28 +42,28 @@ def main_menu(selected_file):
 def get_output_file(file):
     if encode_or_decode(file) == "encode":
         return file + '.encoded.txt'
-    return file.replace('.index.csv', '.decoded.txt')
+    return file.replace('.index.csv', '.decoded.txt') #this creates a filename for a save file
 
 def get_index_file(file):
-    if encode_or_decode(file) == "encode":
+    if encode_or_decode(file) == "encode":   #this creates a filename for a save file
         return file + '.index.csv'
 
 def encode_or_decode(selected_file):
-    if selected_file.lower().endswith('txt'):
+    if selected_file.lower().endswith('txt'): #this checks if a the selected file is a txt or cvs file
         return 'encode' 
     if selected_file.lower().endswith('index.csv'):
         return 'decode' 
     return 'wrong file' 
 
 def clear_console():
-    print("\n" * 100)
+    print("\n" * 100) #prints some white lines
 
 def file_menu():
     clear_console();
     print('')
     print('Select a .txt file to encode or a .index.csv file to decode')
     print('')
-    print('The current directory is ' + os.getcwd())
+    print('The current directory is ' + os.getcwd()) # checks current directory
     print('')
     menu = 1
     print('1: ../')
@@ -76,19 +77,19 @@ def file_menu():
             files[menu] = entry
     print('0: Exit program')
     print('')
-    choice = int(input('Please type 1 to ' + str(menu) + ' or 0: '))
+    choice = int(input('Please type 1 to ' + str(menu) + ' or 0: ')) # with this function you can navigate through your direcory, much easier then typing it in yourself
     return files[choice]
 
 def select_file():
     file_name = file_menu()
-    if file_name.endswith('/'):
+    if file_name.endswith('/'): #if it is another directory it goes in there otherwise it opens the file
         os.chdir(file_name)
         return select_file()
     if len(file_name) == 0:
         return ''
     return file_name
 
-def count_word_in_abstracts(word, abstr_freqs):
+def count_word_in_abstracts(word, abstr_freqs): #how many words are in an abstract?
     count = 0
     for abstract_index in abstr_freqs:
         if word in abstr_freqs[abstract_index]:
@@ -96,10 +97,10 @@ def count_word_in_abstracts(word, abstr_freqs):
     return count
 
 def write_decoded_files(selected_file, words, codes, abstr_freqs,
-                    total_freqs, abstracts, encodedAbstracts):
+                    total_freqs, abstracts, encodedAbstracts): #unfortunatly we did not have time to make a decoder...
     print("to do")
     
-def write_encoded_files(selected_file, words, codes, abstr_freqs,
+def write_encoded_files(selected_file, words, codes, abstr_freqs, #this writes the encoded txt file
                     total_freqs, abstracts, encodedAbstracts):
     output_file = get_output_file(selected_file)
     file = open(output_file, "w+")
@@ -107,9 +108,9 @@ def write_encoded_files(selected_file, words, codes, abstr_freqs,
         file.write(encodedAbstracts[abstract_index] + '\n')
     file.close()
 
-    csv_file = get_index_file(selected_file)
+    csv_file = get_index_file(selected_file) #this writes the csv file
     file = open(csv_file, "w+")
-    file.write("word,number,frequency,abstracts\n")
+    file.write("word,number,frequency,abstracts\n") #title of csv file
 
     for word in codes:
         if codes[word] == 0:
@@ -145,17 +146,17 @@ def print_encode_result(selected_file, words, codes, total_freqs, abstracts):
     for word in codes:
         index_size += len(word)
     
-    comp_rate = math.floor((output_size + index_size) / orig_size * 100)
+    comp_rate = math.floor((output_size + index_size) / orig_size * 100) #comperssion rate calculator
     print()
     print("---------------------------")
-    print("Found " + str(len(words)) + " unique words")
+    print("Found " + str(len(words)) + " unique words")         #this prints the amount of unique words found in how many abstracts
     print("in " + str(len(abstracts)) + " abstracts.")
     print("The compression rate is " + str(comp_rate) + "%")
     print("---------------------------")
     print()
 
     words_per_letter = {}
-    unique_words_per_letter = {}
+    unique_words_per_letter = {}                        # this creates dicts for the letters per word and the amount of unique letters per word
     for letter in "abcdefghijklmnopqrstuvwxyz":
         words_per_letter[letter] = 0
         unique_words_per_letter[letter] = 0
@@ -184,7 +185,7 @@ def print_encode_result(selected_file, words, codes, total_freqs, abstracts):
     for letter in weener_list:
         most_words = words_per_letter[max(words_per_letter, key=words_per_letter.get)]
         bars_equal = int(round(words_per_letter[letter] / most_words * 40))
-        bars_plus = int(round(unique_words_per_letter[letter] / most_words * 40))
+        bars_plus = int(round(unique_words_per_letter[letter] / most_words * 40))               #this calculates how many + and = has to be printed in the textual histogram
         amount_bars_equal = ''
         amount_bars_plus = ''
         count_equal = 0
@@ -198,7 +199,7 @@ def print_encode_result(selected_file, words, codes, total_freqs, abstracts):
         
         fmt = '{: <40}'.format(amount_bars_plus + amount_bars_equal)
         print(letter + ' | '  + fmt, end='')
-        fmt = '{:>5}'.format(unique_words_per_letter[letter])
+        fmt = '{:>5}'.format(unique_words_per_letter[letter])                   # this makes the histogram orginized and places spaces if there are no + or = to place
         print(' | ' + fmt , end='')
         fmt = '{:>5}'.format(words_per_letter[letter])
         print(' | ' + fmt + ' | ' )
@@ -209,7 +210,7 @@ def main(selected_file):
     abstracts, encodedAbstracts = {}, {}
     
     while True:
-        choice = intro(selected_file)
+        choice = main_menu(selected_file)                           
 
         if choice == 1:
             selected_file = select_file()
@@ -244,14 +245,14 @@ def main(selected_file):
             print('Goodbye!')
             return
     
-def store_word(word, abstract_nr, abstr_freqs, total_freqs, codes, words):
+def store_word(word, abstract_nr, abstr_freqs, total_freqs, codes, words): #this stores a word in the coded file, if a word isn't seen yet is creates a new key and value and if it is already seen it adds one to the value
 
     if not word in codes:
         wordCount = len(words) + 1
         words[wordCount] = word
         codes[word] = wordCount
 
-    myWord = word.lower()
+    myWord = word.lower()                                   
     
     if not myWord in total_freqs:
         total_freqs[myWord] = 1
@@ -274,7 +275,7 @@ def decode(file_name, words, codes,  abstr_freqs, total_freqs,
 def encode(file_name, words, codes,  abstr_freqs, total_freqs,
            abstracts, encodedAbstracts):
     word = ''
-    abstractCount = 0
+    abstractCount =                                                         #this is will check if a character is a \ or a number, which it will have to encode in a different way
     file = open(file_name)
     for abstract in file.readlines():
         coded=''
@@ -307,8 +308,8 @@ def encode(file_name, words, codes,  abstr_freqs, total_freqs,
         coded=''
         abstractCount += 1
     
-    ''' Put all cap words without lowercase in codes with code 0'''
-    for index in words:
+   
+    for index in words:                                         # Put all cap words without lowercase in codes with code 0
         word = words[index]
         low_word = word.lower()
         if low_word not in codes:
