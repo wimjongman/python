@@ -130,12 +130,26 @@ def write_files(selected_file, words, abstr_freqs,
                 weener = letter
                 weener_freq = words_per_letter[letter]
         del all_players[weener]
-        weener_list[weener] = weener_freq
-        
+        weener_list[weener] = weener_freq        
     for letter in weener_list:
-        print (letter + str(weener_list[letter]))
-
-
+        most_words = words_per_letter[max(words_per_letter, key=words_per_letter.get)]
+        bars_equal = int(round(words_per_letter[letter] / most_words * 40))
+        bars_plus = int(round(unique_words_per_letter[letter] / most_words * 40))
+        amount_bars_equal = ''
+        amount_bars_plus = ''
+        count_equal = 0
+        count_plus = 0
+        while bars_plus > count_plus:
+            amount_bars_plus = amount_bars_plus + '+'
+            count_plus = count_plus + 1
+        while bars_equal - count_plus > count_equal :
+            amount_bars_equal = amount_bars_equal + '='
+            count_equal = count_equal + 1
+        print(letter + ' | ' + amount_bars_plus + amount_bars_equal, end='')
+        print(' | ' + str(unique_words_per_letter[letter]), end='')
+        print(' | ' + str(words_per_letter[letter]))
+        
+        
 def main(selected_file):
     choice = intro(selected_file)
     if choice == 1:
