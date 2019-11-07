@@ -1,26 +1,68 @@
+'''
+Student .......: Sam Jongman
+Number ........: S2550040
+Assignment ....: Abstracts
+Last Edit Date : Nov, 7 2019
+
+Description ...: This program encodes and decodes text files
+'''
+
 import os
 import math
-import string
 
-def intro(selected_file):
-    print('')
+def main_menu(selected_file):
+    clear_console();
+    options = "1"
     print('Welcome to Abstracts')
     print('')
-    if len(selected_file) != 0:
+    print('This program is used to encode or decode text files.')
+    print('')
+    if encode_or_decode(selected_file) == 'encode':
         print('Selected file: ' + selected_file)
-        print('Output file: ' + selected_file + '.output')
-        print('Index file: ' + selected_file + '.index.CSV')
-        print('')
-    print('1: Load input file')
-    print('2: Process file')
-    print('3: Save output files')
+        print('Output file: ' + get_output_file(selected_file))
+        print('Index file: ' + get_index_file(selected_file))
+    elif encode_or_decode(selected_file) == 'decode':
+        print('Selected file: ' + selected_file)
+        print('Output file: ' + get_output_file(selected_file))
+    else:
+        print('No .txt or index.csv file selected.')
+    print('')
+    print('1: Select a file')
+    if selected_file.lower().endswith('txt'):
+        print('2: Encode ' + selected_file)
+        options += ", 2" 
+    if selected_file.lower().endswith('csv'):
+        print('2: Decode ' + selected_file)
+        options += ", 2" 
     print('0: Exit program')
     print('')
-    return int(input('Please type 1, 2, 3 or 0: '))
+    return int(input('Please type ' + options + ' or 0: '))
 
-def list_dir():
+def get_output_file(file):
+    if encode_or_decode(file) == "encode":
+        return file + '.encoded.txt'
+    return file.replace('.index.csv', '.decoded.txt')
+
+def get_index_file(file):
+    if encode_or_decode(file) == "encode":
+        return file + '.index.csv'
+
+def encode_or_decode(selected_file):
+    if selected_file.lower().endswith('txt'):
+        return 'encode' 
+    if selected_file.lower().endswith('index.csv'):
+        return 'decode' 
+    return 'wrong file' 
+
+def clear_console():
+    print("\n" * 100)
+
+def file_menu():
+    clear_console();
     print('')
-    print('Current directory: ' + os.getcwd())
+    print('Select a .txt file to encode or a .index.csv file to decode')
+    print('')
+    print('The current directory is ' + os.getcwd())
     print('')
     menu = 1
     print('1: ../')
@@ -33,11 +75,12 @@ def list_dir():
             print(str(menu) + ': ' + entry)
             files[menu] = entry
     print('0: Exit program')
+    print('')
     choice = int(input('Please type 1 to ' + str(menu) + ' or 0: '))
     return files[choice]
 
 def select_file():
-    file_name = list_dir()
+    file_name = file_menu()
     if file_name.endswith('/'):
         os.chdir(file_name)
         return select_file()
@@ -52,21 +95,23 @@ def count_word_in_abstracts(word, abstr_freqs):
             count += 1
     return count
 
-def write_files(selected_file, words, abstr_freqs,
-                    total_freqs, encodedAbstracts):
-    output_file = selected_file + '.output'
+def write_decoded_files(selected_file, words, codes, abstr_freqs,
+                    total_freqs, abstracts, encodedAbstracts):
+    print("to do")
+    
+def write_encoded_files(selected_file, words, codes, abstr_freqs,
+                    total_freqs, abstracts, encodedAbstracts):
+    output_file = get_output_file(selected_file)
     file = open(output_file, "w+")
     for abstract_index in encodedAbstracts:
         file.write(encodedAbstracts[abstract_index] + '\n')
     file.close()
 
-    csv_file = selected_file + '.index.csv'
+    csv_file = get_index_file(selected_file)
     file = open(csv_file, "w+")
     file.write("word,number,frequency,abstracts\n")
 
-    index_size = 0
     for word in codes:
-        index_size += len(word)
         if codes[word] == 0:
             continue
         file.write(word + ',')
@@ -91,22 +136,27 @@ def write_files(selected_file, words, abstr_freqs,
             file.write("0\n")
 
     file.close()
-    
+
+def print_encode_result(selected_file, words, codes, total_freqs, abstracts):
     orig_size = os.path.getsize(selected_file);
-    output_size = os.path.getsize(output_file);
-    # index_size = os.path.getsize(csv_file);
+    output_size = os.path.getsize(get_output_file(selected_file));
+    
+    index_size = 0
+    for word in codes:
+        index_size += len(word)
     
     comp_rate = math.floor((output_size + index_size) / orig_size * 100)
     print()
-    print("--------------------")
+    print("---------------------------")
     print("Found " + str(len(words)) + " unique words")
     print("in " + str(len(abstracts)) + " abstracts.")
     print("The compression rate is " + str(comp_rate) + "%")
-    print("--------------------")
+    print("---------------------------")
+    print()
 
     words_per_letter = {}
     unique_words_per_letter = {}
-    for letter in string.ascii_lowercase:
+    for letter in "abcdefghijklmnopqrstuvwxyz":
         words_per_letter[letter] = 0
         unique_words_per_letter[letter] = 0
         for word in total_freqs:
@@ -116,7 +166,7 @@ def write_files(selected_file, words, abstr_freqs,
                     unique_words_per_letter[letter] += 1 
 
     all_players = {}
-    for letter in string.ascii_lowercase:
+    for letter in "abcdefghijklmnopqrstuvwxyz":
         all_players[letter] = letter
         
     weener_list = {}
@@ -155,30 +205,44 @@ def write_files(selected_file, words, abstr_freqs,
         
         
 def main(selected_file):
-    choice = intro(selected_file)
-    if choice == 1:
-        selected_file = select_file()
-        if len(selected_file) == 0:
+    words, codes, abstr_freqs, total_freqs = {}, {}, {}, {}
+    abstracts, encodedAbstracts = {}, {}
+    
+    while True:
+        choice = intro(selected_file)
+
+        if choice == 1:
+            selected_file = select_file()
+            if len(selected_file) == 0:
+                print('')
+                print('Goodbye!')
+                return
+     
+        elif (choice == 2) and encode_or_decode(selected_file) == "encode":
+            encode(selected_file, words, codes, abstr_freqs,
+                           total_freqs, abstracts, encodedAbstracts)
+            write_encoded_files(selected_file, words, codes, abstr_freqs,
+                        total_freqs, abstracts, encodedAbstracts)
+            print("")
+            print_encode_result(selected_file, words, codes, 
+                                total_freqs, abstracts)
+            print()
+            print('Thank you, come again.')
+            return
+     
+        elif (choice == 2) and encode_or_decode(selected_file) == "decode" :
+            decode(selected_file, words, codes, abstr_freqs,
+                           total_freqs, abstracts, encodedAbstracts)
+            write_decoded_files(selected_file, words, codes, abstr_freqs,
+                        total_freqs, abstracts, encodedAbstracts)
+            print()
+            print('Thank you, come again.')
+            return
+    
+        elif choice == 0:
             print('')
             print('Goodbye!')
             return
- 
-    elif (choice == 2) and (len(selected_file) != 0):
-        encode(selected_file, words, codes, abstr_freqs,
-                       total_freqs, abstracts, encodedAbstracts)
-
-    elif (choice == 3) and (len(selected_file) != 0):
-        write_files(selected_file, words, abstr_freqs,
-                    total_freqs, encodedAbstracts)
-        print()
-        print('Thank you, come again.')
-        return
-
-    elif choice == 0:
-        print('')
-        print('Goodbye!')
-        return
-    main(selected_file)
     
 def store_word(word, abstract_nr, abstr_freqs, total_freqs, codes, words):
 
@@ -186,11 +250,6 @@ def store_word(word, abstract_nr, abstr_freqs, total_freqs, codes, words):
         wordCount = len(words) + 1
         words[wordCount] = word
         codes[word] = wordCount
-
-#    if word.lower() != word:
-#        return
-#        if not word.lower() in codes:
-#            codes[word.lower()] = 0        
 
     myWord = word.lower()
     
@@ -206,6 +265,11 @@ def store_word(word, abstract_nr, abstr_freqs, total_freqs, codes, words):
         abstr_freqs[abstract_nr][myWord] = 1
     else:
         abstr_freqs[abstract_nr][myWord] += 1
+
+        
+def decode(file_name, words, codes,  abstr_freqs, total_freqs,
+           abstracts, encodedAbstracts):
+    print("to do")
         
 def encode(file_name, words, codes,  abstr_freqs, total_freqs,
            abstracts, encodedAbstracts):
@@ -250,7 +314,5 @@ def encode(file_name, words, codes,  abstr_freqs, total_freqs,
         if low_word not in codes:
             codes[low_word] = 0
 
-words, codes, abstr_freqs, total_freqs = {}, {}, {}, {}
-abstracts, encodedAbstracts = {}, {}
 
 main('')
