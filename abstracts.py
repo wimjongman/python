@@ -145,9 +145,13 @@ def write_files(selected_file, words, abstr_freqs,
         while bars_equal - count_plus > count_equal :
             amount_bars_equal = amount_bars_equal + '='
             count_equal = count_equal + 1
-        print(letter + ' | ' + amount_bars_plus + amount_bars_equal, end='')
-        print(' | ' + str(unique_words_per_letter[letter]), end='')
-        print(' | ' + str(words_per_letter[letter]))
+        
+        fmt = '{: <40}'.format(amount_bars_plus + amount_bars_equal)
+        print(letter + ' | '  + fmt, end='')
+        fmt = '{:>5}'.format(unique_words_per_letter[letter])
+        print(' | ' + fmt , end='')
+        fmt = '{:>5}'.format(words_per_letter[letter])
+        print(' | ' + fmt + ' | ' )
         
         
 def main(selected_file):
@@ -166,6 +170,9 @@ def main(selected_file):
     elif (choice == 3) and (len(selected_file) != 0):
         write_files(selected_file, words, abstr_freqs,
                     total_freqs, encodedAbstracts)
+        print()
+        print('Thank you, come again.')
+        return
 
     elif choice == 0:
         print('')
